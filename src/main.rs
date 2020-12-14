@@ -237,23 +237,23 @@ fn go_rand_norm_corner(board_rand_norm_corner: &mut [Tile; 9]) -> (usize, bool) 
 fn go_rand_corner_w_bordering_corner(board_rand_corner_w_bordering_corner: &mut [Tile; 9]) -> (usize, bool) {
     let mut rng = rand::thread_rng();
     for _i in 1..101 {
-        // CURRENT WORK
         // all the way at bottom of scratch.
         // question: when i do `if a == b || a == b && a == b` like what happens?
         // look at block formation in scratch. might require a rerestructure of this function.
         // THIS MAY NOT WORK ---- LOOK FOR DEBUGGING HERE FIRST
+        // THIS IS THE PART THAT DOESNT WORK. USE () TO MAKE THE "ORDER OF OPERATIONS" MORE CLEAR.
         let rand = rng.gen_range(1,5);
         if rand == 1 {
-            if board_rand_corner_w_bordering_corner[2] == Tile::X && board_rand_corner_w_bordering_corner[0] == Tile::E || board_rand_corner_w_bordering_corner[6] == Tile::X && board_rand_corner_w_bordering_corner[0] == Tile::E { return (0, true); }
+            if (board_rand_corner_w_bordering_corner[2] == Tile::X && board_rand_corner_w_bordering_corner[0] == Tile::E) || (board_rand_corner_w_bordering_corner[6] == Tile::X && board_rand_corner_w_bordering_corner[0] == Tile::E) { return (0, true); }
         }
         if rand == 2 {
-            if board_rand_corner_w_bordering_corner[0] == Tile::X && board_rand_corner_w_bordering_corner[2] == Tile::E || board_rand_corner_w_bordering_corner[8] == Tile::X && board_rand_corner_w_bordering_corner[2] == Tile::E { return (2, true); }
+            if (board_rand_corner_w_bordering_corner[0] == Tile::X && board_rand_corner_w_bordering_corner[2] == Tile::E) || (board_rand_corner_w_bordering_corner[8] == Tile::X && board_rand_corner_w_bordering_corner[2] == Tile::E) { return (2, true); }
         }
         if rand == 3 {
-            if board_rand_corner_w_bordering_corner[0] == Tile::X && board_rand_corner_w_bordering_corner[6] == Tile::E || board_rand_corner_w_bordering_corner[8] == Tile::X && board_rand_corner_w_bordering_corner[6] == Tile::E { return (6, true); }
+            if (board_rand_corner_w_bordering_corner[0] == Tile::X && board_rand_corner_w_bordering_corner[6] == Tile::E) || (board_rand_corner_w_bordering_corner[8] == Tile::X && board_rand_corner_w_bordering_corner[6] == Tile::E) { return (6, true); }
         }
         if rand == 4 {
-            if board_rand_corner_w_bordering_corner[2] == Tile::X && board_rand_corner_w_bordering_corner[8] == Tile::E || board_rand_corner_w_bordering_corner[6] == Tile::X && board_rand_corner_w_bordering_corner[8] == Tile::E { return (8, true); }
+            if (board_rand_corner_w_bordering_corner[2] == Tile::X && board_rand_corner_w_bordering_corner[8] == Tile::E) || (board_rand_corner_w_bordering_corner[6] == Tile::X && board_rand_corner_w_bordering_corner[8] == Tile::E) { return (8, true); }
         }
     }
     return (0, false);
