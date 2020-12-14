@@ -64,6 +64,8 @@ fn turn(isx: bool, board_turn: &mut [Tile; 9]) -> usize {
         input_int = input_int - 1;
         if board_turn[input_int] == Tile::E {
             return input_int
+        } else {
+            println!("someone has already gone there!");
         }
     }
 }
