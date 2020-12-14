@@ -291,6 +291,8 @@ fn computer_turn(board_turn: &mut [Tile; 9]) -> (usize, bool) {
     if rand_norm_corner.1 == true { return (rand_norm_corner.0, true) }
     let rand_corner_w_bordering_corner = go_rand_corner_w_bordering_corner(board_turn);
     if rand_corner_w_bordering_corner.1 == true { return (rand_corner_w_bordering_corner.0, true); }
+    let rand_norm_edge = go_rand_norm_edge(board_turn);
+    if rand_norm_edge.1 == true { return (rand_norm_edge.0, true); }
     let complete_random = go_complete_random(board_turn);
     if complete_random.1 == true { return (complete_random.0, true); }
     return (0, false);
