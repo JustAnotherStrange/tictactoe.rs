@@ -72,7 +72,7 @@ fn twoplayer() {
     // gen board
     let mut board: [Tile; 9] = [Tile::E; 9];
     // player input
-    print!("\x1B[2J");
+    print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
     println!("1 | 2 | 3");
     println!("----------");
     println!("4 | 5 | 6");
@@ -80,12 +80,12 @@ fn twoplayer() {
     println!("7 | 8 | 9");
     loop {
         board[turn(true, &mut board)] = Tile::X;
-        print!("\x1B[2J");
+        print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
         print_board(&mut board);
         let win = win_check(&mut board);
         if win == 1 { println!("X Wins"); break; } else if win == 2 { println!("tie!"); break; }
         board[turn(false, &mut board)] = Tile::O;
-        print!("\x1B[2J");
+        print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
         print_board(&mut board);
         let win = win_check(&mut board);
         if win == 1 { println!("O wins!"); break; } else if win == 2 { println!("tie!"); break }
@@ -297,8 +297,8 @@ fn computer_turn(board_turn: &mut [Tile; 9]) -> (usize, bool) {
 }
 fn computer() {
     // gen board
-    print!("\x1B[2J");
     let mut board: [Tile; 9] = [Tile::E; 9];
+    print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
     println!("1 | 2 | 3");
     println!("----------");
     println!("4 | 5 | 6");
@@ -307,7 +307,7 @@ fn computer() {
     loop {
         // Human's turn
         board[turn(true, &mut board)] = Tile::X;
-        print!("\x1B[2J");
+        print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
         print_board(&mut board);
         let win = win_check(&mut board);
         if win == 1 { println!("X Wins"); break; } else if win == 2 { println!("tie!"); break; }
@@ -316,7 +316,7 @@ fn computer() {
         // wait one second
         let one_second = time::Duration::new(1, 0);
         thread::sleep(one_second);
-        print!("\x1B[2J");
+        print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
         let comp_turn = computer_turn(&mut board);
         if comp_turn.1 == true {
             board[comp_turn.0] = Tile::O;
@@ -328,7 +328,7 @@ fn computer() {
 }
 
 fn main() {
-    print!("\x1B[2J");
+    print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
     println!("would you like to play two player or against the computer?");
     println!("'single' for single player, 'two' for two player");
     let mut choice = String::new();
