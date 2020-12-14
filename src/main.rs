@@ -26,25 +26,29 @@ fn print_board(board_nice: &mut [Tile; 9]) {
     println!("{} | {} | {}", print_tile(board_nice[6]),print_tile(board_nice[7]),print_tile(board_nice[8]));
 }
 
-fn win_check(board_win: &mut [Tile; 9]) -> bool {
-    if board_win[0] == Tile::X && board_win[1] == Tile::X && board_win[2] == Tile::X { return true; }
-    if board_win[3] == Tile::X && board_win[4] == Tile::X && board_win[5] == Tile::X { return true; }
-    if board_win[6] == Tile::X && board_win[7] == Tile::X && board_win[8] == Tile::X { return true; }
-    if board_win[0] == Tile::X && board_win[3] == Tile::X && board_win[6] == Tile::X { return true; }
-    if board_win[1] == Tile::X && board_win[4] == Tile::X && board_win[7] == Tile::X { return true; }
-    if board_win[2] == Tile::X && board_win[5] == Tile::X && board_win[8] == Tile::X { return true; }
-    if board_win[0] == Tile::X && board_win[4] == Tile::X && board_win[8] == Tile::X { return true; }
-    if board_win[2] == Tile::X && board_win[4] == Tile::X && board_win[6] == Tile::X { return true; }
+fn win_check(board_win: &mut [Tile; 9]) -> i32 {
+    if board_win[0] == Tile::X && board_win[1] == Tile::X && board_win[2] == Tile::X { return 1; }
+    if board_win[3] == Tile::X && board_win[4] == Tile::X && board_win[5] == Tile::X { return 1; }
+    if board_win[6] == Tile::X && board_win[7] == Tile::X && board_win[8] == Tile::X { return 1; }
+    if board_win[0] == Tile::X && board_win[3] == Tile::X && board_win[6] == Tile::X { return 1; }
+    if board_win[1] == Tile::X && board_win[4] == Tile::X && board_win[7] == Tile::X { return 1; }
+    if board_win[2] == Tile::X && board_win[5] == Tile::X && board_win[8] == Tile::X { return 1; }
+    if board_win[0] == Tile::X && board_win[4] == Tile::X && board_win[8] == Tile::X { return 1; }
+    if board_win[2] == Tile::X && board_win[4] == Tile::X && board_win[6] == Tile::X { return 1; }
     
-    if board_win[0] == Tile::O && board_win[1] == Tile::O && board_win[2] == Tile::O { return true; }
-    if board_win[3] == Tile::O && board_win[4] == Tile::O && board_win[5] == Tile::O { return true; }
-    if board_win[6] == Tile::O && board_win[7] == Tile::O && board_win[8] == Tile::O { return true; }
-    if board_win[0] == Tile::O && board_win[3] == Tile::O && board_win[6] == Tile::O { return true; }
-    if board_win[1] == Tile::O && board_win[4] == Tile::O && board_win[7] == Tile::O { return true; }
-    if board_win[2] == Tile::O && board_win[5] == Tile::O && board_win[8] == Tile::O { return true; }
-    if board_win[0] == Tile::O && board_win[4] == Tile::O && board_win[8] == Tile::O { return true; }
-    if board_win[2] == Tile::O && board_win[4] == Tile::O && board_win[6] == Tile::O { return true; }
-    return false;
+    if board_win[0] == Tile::O && board_win[1] == Tile::O && board_win[2] == Tile::O { return 1; }
+    if board_win[3] == Tile::O && board_win[4] == Tile::O && board_win[5] == Tile::O { return 1; }
+    if board_win[6] == Tile::O && board_win[7] == Tile::O && board_win[8] == Tile::O { return 1; }
+    if board_win[0] == Tile::O && board_win[3] == Tile::O && board_win[6] == Tile::O { return 1; }
+    if board_win[1] == Tile::O && board_win[4] == Tile::O && board_win[7] == Tile::O { return 1; }
+    if board_win[2] == Tile::O && board_win[5] == Tile::O && board_win[8] == Tile::O { return 1; }
+    if board_win[0] == Tile::O && board_win[4] == Tile::O && board_win[8] == Tile::O { return 1; }
+    if board_win[2] == Tile::O && board_win[4] == Tile::O && board_win[6] == Tile::O { return 1; }
+
+    if board_win[0] != Tile::E && board_win[1] != Tile::E && board_win[3] != Tile::E && board_win[4] != Tile::E && board_win[5] != Tile::E && board_win[6] != Tile::E && board_win[6] != Tile::E && board_win[7] != Tile::E && board_win[8] != Tile::E {
+        return 2;
+    }
+    return 0;
 }
 
 fn turn(isx: bool, board_turn: &mut [Tile; 9]) -> usize {
@@ -76,10 +80,12 @@ fn twoplayer() {
     loop {
         board[turn(true, &mut board)] = Tile::X;
         print_board(&mut board);
-        if win_check(&mut board) { println!("X Wins"); break; }
+        let win = win_check(&mut board);
+        if win == 1 { println!("X Wins"); break; } else if win == 2 { println!("tie!"); break; }
         board[turn(false, &mut board)] = Tile::O;
         print_board(&mut board);
-        if win_check(&mut board) { println!("O wins!"); break; }
+        let win = win_check(&mut board);
+        if win == 1 { println!("O wins!"); break; } else if win == 2 { println!("tie!"); break }
     }
 }
 
@@ -298,7 +304,8 @@ fn computer() {
         // Human's turn
         board[turn(true, &mut board)] = Tile::X;
         print_board(&mut board);
-        if win_check(&mut board) { println!("X Wins"); break; }
+        let win = win_check(&mut board);
+        if win == 1 { println!("X Wins"); break; } else if win == 2 { println!("tie!"); break; }
         // computer turn
         println!("thinking...");
         // wait one second
@@ -309,7 +316,8 @@ fn computer() {
             board[comp_turn.0] = Tile::O;
         }
         print_board(&mut board);
-        if win_check(&mut board) { println!("O wins!"); break; }
+        let win = win_check(&mut board);
+        if win == 1 { println!("O wins!"); break; } else if win == 2 { println!("tie!"); break; }
     }
 }
 
