@@ -303,6 +303,7 @@ fn computer() {
     loop {
         // Human's turn
         board[turn(true, &mut board)] = Tile::X;
+        print!("\x1B[2J");
         print_board(&mut board);
         let win = win_check(&mut board);
         if win == 1 { println!("X Wins"); break; } else if win == 2 { println!("tie!"); break; }
@@ -311,6 +312,7 @@ fn computer() {
         // wait one second
         let one_second = time::Duration::new(1, 0);
         thread::sleep(one_second);
+        print!("\x1B[2J");
         let comp_turn = computer_turn(&mut board);
         if comp_turn.1 == true {
             board[comp_turn.0] = Tile::O;
