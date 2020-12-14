@@ -1,4 +1,4 @@
-// TODO: 
+// TODO:
 // make error handling and not just crashing, especially on when moving on somewhere where theres already a thing
 // make win condition also check for O
 use rand::Rng;
@@ -35,7 +35,7 @@ fn win_check(board_win: &mut [Tile; 9]) -> i32 {
     if board_win[2] == Tile::X && board_win[5] == Tile::X && board_win[8] == Tile::X { return 1; }
     if board_win[0] == Tile::X && board_win[4] == Tile::X && board_win[8] == Tile::X { return 1; }
     if board_win[2] == Tile::X && board_win[4] == Tile::X && board_win[6] == Tile::X { return 1; }
-    
+
     if board_win[0] == Tile::O && board_win[1] == Tile::O && board_win[2] == Tile::O { return 1; }
     if board_win[3] == Tile::O && board_win[4] == Tile::O && board_win[5] == Tile::O { return 1; }
     if board_win[6] == Tile::O && board_win[7] == Tile::O && board_win[8] == Tile::O { return 1; }
@@ -51,24 +51,26 @@ fn win_check(board_win: &mut [Tile; 9]) -> i32 {
     return 0;
 }
 
-fn turn(isx: bool, board_turn: &mut [Tile; 9]) -> usize {
+fn turn(isx: bool, board_turn: &mut [Tile; 9]) -> Option<usize> {
     loop {
         let mut input = String::new();
         if isx == true { println!("player 1: what is your move?"); } else { println!("player 2: what is your move?"); };
         std::io::stdin().read_line(&mut input).unwrap();
         // remove newline character and turn into an integer from string
         let len = input.len();
+        // prevent panic on eof
+        if len < 1 { return None; }
         input.truncate(len - 1);
         let mut input_int: usize = input.parse().unwrap();
         // off by one error prevention
         input_int = input_int - 1;
         if board_turn[input_int] == Tile::E {
-            return input_int
+            return Some(input_int);
         }
     }
 }
 
-fn twoplayer() { 
+fn twoplayer() -> Option<()> {
     // gen board
     let mut board: [Tile; 9] = [Tile::E; 9];
     // player input
@@ -79,17 +81,18 @@ fn twoplayer() {
     println!("----------");
     println!("7 | 8 | 9");
     loop {
-        board[turn(true, &mut board)] = Tile::X;
+        board[turn(true, &mut board)?] = Tile::X;
         print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
         print_board(&mut board);
         let win = win_check(&mut board);
         if win == 1 { println!("X Wins"); break; } else if win == 2 { println!("tie!"); break; }
-        board[turn(false, &mut board)] = Tile::O;
+        board[turn(false, &mut board)?] = Tile::O;
         print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
         print_board(&mut board);
         let win = win_check(&mut board);
         if win == 1 { println!("O wins!"); break; } else if win == 2 { println!("tie!"); break }
     }
+    Some(())
 }
 
 fn go_two_os(board_two_os: &mut [Tile; 9]) -> (usize, bool) {
@@ -295,7 +298,7 @@ fn computer_turn(board_turn: &mut [Tile; 9]) -> (usize, bool) {
     if complete_random.1 == true { return (complete_random.0, true); }
     return (0, false);
 }
-fn computer() {
+fn computer() -> Option<()> {
     // gen board
     let mut board: [Tile; 9] = [Tile::E; 9];
     print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
@@ -306,7 +309,7 @@ fn computer() {
     println!("7 | 8 | 9");
     loop {
         // Human's turn
-        board[turn(true, &mut board)] = Tile::X;
+        board[turn(true, &mut board)?] = Tile::X;
         print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
         print_board(&mut board);
         let win = win_check(&mut board);
@@ -325,6 +328,7 @@ fn computer() {
         let win = win_check(&mut board);
         if win == 1 { println!("O wins!"); break; } else if win == 2 { println!("tie!"); break; }
     }
+    Some(())
 }
 
 fn main() {
@@ -334,10 +338,12 @@ fn main() {
     let mut choice = String::new();
     std::io::stdin().read_line(&mut choice).unwrap();
     let len = choice.len();
+    // prevent panic on eof
+    if len < 1 { return; }
     choice.truncate(len - 1);
     if choice == "single" {
         computer();
     } else if choice == "two" {
-        twoplayer()
-    } 
+        twoplayer();
+    }
 }
