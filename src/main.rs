@@ -95,58 +95,28 @@ fn twoplayer() {
 }
 
 fn go_two_os(board_two_os: &mut [Tile; 9]) -> (usize, bool) {
-    if board_two_os[0] == Tile::O && board_two_os[1] == Tile::O && board_two_os[2] == Tile::E { return (2, true); }
-    if board_two_os[0] == Tile::O && board_two_os[2] == Tile::O && board_two_os[1] == Tile::E { return (1, true); }
-    if board_two_os[1] == Tile::O && board_two_os[2] == Tile::O && board_two_os[0] == Tile::E { return (0, true); }
-    if board_two_os[3] == Tile::O && board_two_os[4] == Tile::O && board_two_os[5] == Tile::E { return (5, true); }
-    if board_two_os[3] == Tile::O && board_two_os[5] == Tile::O && board_two_os[4] == Tile::E { return (4, true); }
-    if board_two_os[4] == Tile::O && board_two_os[5] == Tile::O && board_two_os[3] == Tile::E { return (3, true); }
-    if board_two_os[6] == Tile::O && board_two_os[7] == Tile::O && board_two_os[8] == Tile::E { return (8, true); }
-    if board_two_os[6] == Tile::O && board_two_os[8] == Tile::O && board_two_os[7] == Tile::E { return (7, true); }
-    if board_two_os[7] == Tile::O && board_two_os[8] == Tile::O && board_two_os[6] == Tile::E { return (6, true); }
-    if board_two_os[0] == Tile::O && board_two_os[3] == Tile::O && board_two_os[6] == Tile::E { return (6, true); }
-    if board_two_os[0] == Tile::O && board_two_os[6] == Tile::O && board_two_os[3] == Tile::E { return (3, true); }
-    if board_two_os[3] == Tile::O && board_two_os[6] == Tile::O && board_two_os[0] == Tile::E { return (0, true); }
-    if board_two_os[1] == Tile::O && board_two_os[4] == Tile::O && board_two_os[7] == Tile::E { return (7, true); }
-    if board_two_os[1] == Tile::O && board_two_os[7] == Tile::O && board_two_os[4] == Tile::E { return (4, true); }
-    if board_two_os[7] == Tile::O && board_two_os[4] == Tile::O && board_two_os[1] == Tile::E { return (1, true); }
-    if board_two_os[2] == Tile::O && board_two_os[5] == Tile::O && board_two_os[8] == Tile::E { return (8, true); }
-    if board_two_os[2] == Tile::O && board_two_os[8] == Tile::O && board_two_os[5] == Tile::E { return (5, true); }
-    if board_two_os[8] == Tile::O && board_two_os[5] == Tile::O && board_two_os[2] == Tile::E { return (2, true); }
-    if board_two_os[0] == Tile::O && board_two_os[4] == Tile::O && board_two_os[8] == Tile::E { return (8, true); }
-    if board_two_os[0] == Tile::O && board_two_os[8] == Tile::O && board_two_os[4] == Tile::E { return (4, true); }
-    if board_two_os[4] == Tile::O && board_two_os[8] == Tile::O && board_two_os[0] == Tile::E { return (0, true); }
-    if board_two_os[2] == Tile::O && board_two_os[4] == Tile::O && board_two_os[6] == Tile::E { return (6, true); }
-    if board_two_os[2] == Tile::O && board_two_os[6] == Tile::O && board_two_os[4] == Tile::E { return (4, true); }
-    if board_two_os[4] == Tile::O && board_two_os[6] == Tile::O && board_two_os[2] == Tile::E { return (2, true); }
+    if (board_two_os[1] == Tile::O && board_two_os[2] == Tile::O && board_two_os[0] == Tile::E) || (board_two_os[3] == Tile::O && board_two_os[6] == Tile::O && board_two_os[0] == Tile::E) || (board_two_os[4] == Tile::O && board_two_os[8] == Tile::O && board_two_os[0] == Tile::E) { return (0, true); }
+    if (board_two_os[0] == Tile::O && board_two_os[2] == Tile::O && board_two_os[1] == Tile::E) || (board_two_os[7] == Tile::O && board_two_os[4] == Tile::O && board_two_os[1] == Tile::E) { return (1, true); }
+    if (board_two_os[0] == Tile::O && board_two_os[1] == Tile::O && board_two_os[2] == Tile::E) || (board_two_os[8] == Tile::O && board_two_os[5] == Tile::O && board_two_os[2] == Tile::E) || (board_two_os[4] == Tile::O && board_two_os[6] == Tile::O && board_two_os[2] == Tile::E) { return (2, true); }
+    if (board_two_os[0] == Tile::O && board_two_os[6] == Tile::O && board_two_os[3] == Tile::E) || (board_two_os[4] == Tile::O && board_two_os[5] == Tile::O && board_two_os[3] == Tile::E) { return (3, true); }
+    if (board_two_os[0] == Tile::O && board_two_os[8] == Tile::O && board_two_os[4] == Tile::E) || (board_two_os[1] == Tile::O && board_two_os[7] == Tile::O && board_two_os[4] == Tile::E) || (board_two_os[2] == Tile::O && board_two_os[6] == Tile::O && board_two_os[4] == Tile::E) || (board_two_os[3] == Tile::O && board_two_os[5] == Tile::O && board_two_os[4] == Tile::E) { return (4, true); }
+    if (board_two_os[3] == Tile::O && board_two_os[4] == Tile::O && board_two_os[5] == Tile::E) || (board_two_os[2] == Tile::O && board_two_os[8] == Tile::O && board_two_os[5] == Tile::E) { return (5, true); }
+    if (board_two_os[7] == Tile::O && board_two_os[8] == Tile::O && board_two_os[6] == Tile::E) || (board_two_os[0] == Tile::O && board_two_os[3] == Tile::O && board_two_os[6] == Tile::E) || (board_two_os[2] == Tile::O && board_two_os[4] == Tile::O && board_two_os[6] == Tile::E) { return (6, true); }
+    if (board_two_os[6] == Tile::O && board_two_os[8] == Tile::O && board_two_os[7] == Tile::E) || (board_two_os[1] == Tile::O && board_two_os[4] == Tile::O && board_two_os[7] == Tile::E) { return (7, true); }
+    if (board_two_os[6] == Tile::O && board_two_os[7] == Tile::O && board_two_os[8] == Tile::E) || (board_two_os[2] == Tile::O && board_two_os[5] == Tile::O && board_two_os[8] == Tile::E) || (board_two_os[0] == Tile::O && board_two_os[4] == Tile::O && board_two_os[8] == Tile::E) { return (8, true); }
     return (0, false);
 }
 
 fn go_two_xs(board_two_xs: &mut [Tile; 9]) -> (usize, bool) {
-    if board_two_xs[0] == Tile::X && board_two_xs[1] == Tile::X && board_two_xs[2] == Tile::E { return (2, true); }
-    if board_two_xs[0] == Tile::X && board_two_xs[2] == Tile::X && board_two_xs[1] == Tile::E { return (1, true); }
-    if board_two_xs[1] == Tile::X && board_two_xs[2] == Tile::X && board_two_xs[0] == Tile::E { return (0, true); }
-    if board_two_xs[3] == Tile::X && board_two_xs[4] == Tile::X && board_two_xs[5] == Tile::E { return (5, true); }
-    if board_two_xs[3] == Tile::X && board_two_xs[5] == Tile::X && board_two_xs[4] == Tile::E { return (4, true); }
-    if board_two_xs[4] == Tile::X && board_two_xs[5] == Tile::X && board_two_xs[3] == Tile::E { return (3, true); }
-    if board_two_xs[6] == Tile::X && board_two_xs[7] == Tile::X && board_two_xs[8] == Tile::E { return (8, true); }
-    if board_two_xs[6] == Tile::X && board_two_xs[8] == Tile::X && board_two_xs[7] == Tile::E { return (7, true); }
-    if board_two_xs[7] == Tile::X && board_two_xs[8] == Tile::X && board_two_xs[6] == Tile::E { return (6, true); }
-    if board_two_xs[0] == Tile::X && board_two_xs[3] == Tile::X && board_two_xs[6] == Tile::E { return (6, true); }
-    if board_two_xs[0] == Tile::X && board_two_xs[6] == Tile::X && board_two_xs[3] == Tile::E { return (3, true); }
-    if board_two_xs[3] == Tile::X && board_two_xs[6] == Tile::X && board_two_xs[0] == Tile::E { return (0, true); }
-    if board_two_xs[1] == Tile::X && board_two_xs[4] == Tile::X && board_two_xs[7] == Tile::E { return (7, true); }
-    if board_two_xs[1] == Tile::X && board_two_xs[7] == Tile::X && board_two_xs[4] == Tile::E { return (4, true); }
-    if board_two_xs[7] == Tile::X && board_two_xs[4] == Tile::X && board_two_xs[1] == Tile::E { return (1, true); }
-    if board_two_xs[2] == Tile::X && board_two_xs[5] == Tile::X && board_two_xs[8] == Tile::E { return (8, true); }
-    if board_two_xs[2] == Tile::X && board_two_xs[8] == Tile::X && board_two_xs[5] == Tile::E { return (5, true); }
-    if board_two_xs[8] == Tile::X && board_two_xs[5] == Tile::X && board_two_xs[2] == Tile::E { return (2, true); }
-    if board_two_xs[0] == Tile::X && board_two_xs[4] == Tile::X && board_two_xs[8] == Tile::E { return (8, true); }
-    if board_two_xs[0] == Tile::X && board_two_xs[8] == Tile::X && board_two_xs[4] == Tile::E { return (4, true); }
-    if board_two_xs[4] == Tile::X && board_two_xs[8] == Tile::X && board_two_xs[0] == Tile::E { return (0, true); }
-    if board_two_xs[2] == Tile::X && board_two_xs[4] == Tile::X && board_two_xs[6] == Tile::E { return (6, true); }
-    if board_two_xs[2] == Tile::X && board_two_xs[6] == Tile::X && board_two_xs[4] == Tile::E { return (4, true); }
-    if board_two_xs[4] == Tile::X && board_two_xs[6] == Tile::X && board_two_xs[2] == Tile::E { return (2, true); }
+    if (board_two_xs[1] == Tile::X && board_two_xs[2] == Tile::X && board_two_xs[0] == Tile::E) || (board_two_xs[4] == Tile::X && board_two_xs[8] == Tile::X && board_two_xs[0] == Tile::E) || (board_two_xs[3] == Tile::X && board_two_xs[6] == Tile::X && board_two_xs[0] == Tile::E) { return (0, true); }
+    if (board_two_xs[0] == Tile::X && board_two_xs[2] == Tile::X && board_two_xs[1] == Tile::E) || (board_two_xs[7] == Tile::X && board_two_xs[4] == Tile::X && board_two_xs[1] == Tile::E) { return (1, true); }
+    if (board_two_xs[0] == Tile::X && board_two_xs[1] == Tile::X && board_two_xs[2] == Tile::E) || (board_two_xs[8] == Tile::X && board_two_xs[5] == Tile::X && board_two_xs[2] == Tile::E) || (board_two_xs[4] == Tile::X && board_two_xs[6] == Tile::X && board_two_xs[2] == Tile::E) { return (2, true); }
+    if (board_two_xs[4] == Tile::X && board_two_xs[5] == Tile::X && board_two_xs[3] == Tile::E) || (board_two_xs[0] == Tile::X && board_two_xs[6] == Tile::X && board_two_xs[3] == Tile::E) { return (3, true); }
+    if (board_two_xs[3] == Tile::X && board_two_xs[5] == Tile::X && board_two_xs[4] == Tile::E) || (board_two_xs[2] == Tile::X && board_two_xs[6] == Tile::X && board_two_xs[4] == Tile::E) || (board_two_xs[0] == Tile::X && board_two_xs[8] == Tile::X && board_two_xs[4] == Tile::E) || (board_two_xs[1] == Tile::X && board_two_xs[7] == Tile::X && board_two_xs[4] == Tile::E) { return (4, true); }
+    if (board_two_xs[2] == Tile::X && board_two_xs[8] == Tile::X && board_two_xs[5] == Tile::E) || (board_two_xs[3] == Tile::X && board_two_xs[4] == Tile::X && board_two_xs[5] == Tile::E) { return (5, true); }
+    if (board_two_xs[7] == Tile::X && board_two_xs[8] == Tile::X && board_two_xs[6] == Tile::E) || (board_two_xs[2] == Tile::X && board_two_xs[4] == Tile::X && board_two_xs[6] == Tile::E) || (board_two_xs[0] == Tile::X && board_two_xs[3] == Tile::X && board_two_xs[6] == Tile::E) { return (6, true); }
+    if (board_two_xs[6] == Tile::X && board_two_xs[8] == Tile::X && board_two_xs[7] == Tile::E) || (board_two_xs[1] == Tile::X && board_two_xs[4] == Tile::X && board_two_xs[7] == Tile::E) { return (7, true); }
+    if (board_two_xs[6] == Tile::X && board_two_xs[7] == Tile::X && board_two_xs[8] == Tile::E) || (board_two_xs[2] == Tile::X && board_two_xs[5] == Tile::X && board_two_xs[8] == Tile::E) || (board_two_xs[0] == Tile::X && board_two_xs[4] == Tile::X && board_two_xs[8] == Tile::E) { return (8, true); }
     return (0, false);
 }
 
