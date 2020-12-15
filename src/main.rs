@@ -1,6 +1,3 @@
-// TODO:
-// make error handling and not just crashing, especially on when moving on somewhere where theres already a thing
-// make win condition also check for O
 use rand::Rng;
 use std::{thread, time};
 #[derive(Debug, Copy, Clone, PartialEq)]
