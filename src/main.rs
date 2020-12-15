@@ -123,20 +123,13 @@ fn go_two_xs(board_two_xs: &mut [Tile; 9]) -> (usize, bool) {
 fn go_rand_norm_edge(board_rand_norm_edge: &mut [Tile; 9]) -> (usize, bool) {
     let mut rng = rand::thread_rng();
     let rand = rng.gen_range(1, 6);
-    if rand == 1 && board_rand_norm_edge[1] == Tile::E {
-        return (2, true);
-    }
-    if rand == 2 && board_rand_norm_edge[3] == Tile::E {
-        return (3, true);
-    }
-    if rand == 3 && board_rand_norm_edge[4] == Tile::E {
-        return (4, true);
-    }
-    if rand == 4 && board_rand_norm_edge[5] == Tile::E {
-        return (5, true);
-    }
-    if rand == 5 && board_rand_norm_edge[7] == Tile::E {
-        return (7, true)
+    match rand {
+        1 => if board_rand_norm_edge[1] == Tile::E { return (1, true) },
+        2 => if board_rand_norm_edge[3] == Tile::E { return (3, true) },
+        3 => if board_rand_norm_edge[4] == Tile::E { return (4, true) },
+        4 => if board_rand_norm_edge[5] == Tile::E { return (5, true) },
+        5 => if board_rand_norm_edge[7] == Tile::E { return (7, true) },
+        _ => println!("uh, numbers have broken."),
     }
     return (0, false);
 }
