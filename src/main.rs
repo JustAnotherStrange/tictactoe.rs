@@ -580,6 +580,7 @@ fn computer() {
     let len = difficulty.len();
     difficulty.truncate(len - 1);
     let difficulty_int: usize = difficulty.parse().unwrap();
+    print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
     println!("1 | 2 | 3");
     println!("----------");
     println!("4 | 5 | 6");
