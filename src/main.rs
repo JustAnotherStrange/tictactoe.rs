@@ -1,5 +1,10 @@
+// for random
 use rand::Rng;
+// for sleep
 use std::{thread, time};
+// for usize to i32 convert
+use std::convert::TryInto;
+// define tile (E for empty)
 #[derive(Debug, Copy, Clone, PartialEq)]
 enum Tile {
     X,
@@ -17,21 +22,21 @@ fn print_tile(t: Tile) -> char {
 
 fn print_board(board_nice: &mut [Tile; 9]) {
     println!(
-        "{} | {} | {}",
+        "{} | {} | {}                    1 | 2 | 3",
         print_tile(board_nice[0]),
         print_tile(board_nice[1]),
         print_tile(board_nice[2])
     );
-    println!("----------");
+    println!("----------                   ----------");
     println!(
-        "{} | {} | {}",
+        "{} | {} | {}              Key:  4 | 5 | 6",
         print_tile(board_nice[3]),
         print_tile(board_nice[4]),
         print_tile(board_nice[5])
     );
-    println!("----------");
+    println!("----------                   ----------");
     println!(
-        "{} | {} | {}",
+        "{} | {} | {}                    7 | 8 | 9",
         print_tile(board_nice[6]),
         print_tile(board_nice[7]),
         print_tile(board_nice[8])
@@ -443,62 +448,121 @@ fn go_rand_corner_w_bordering_corner(
     return (0, false);
 }
 
-fn go_complete_random(_board_complete_random: &mut [Tile; 9]) -> (usize, bool) {
+fn go_complete_random(board_complete_random: &mut [Tile; 9]) -> (usize, bool) {
     let mut rng = rand::thread_rng();
     for _i in 1..101 {
         let rand = rng.gen_range(0, 9);
         match rand {
-            0 => return (0, true),
-            1 => return (1, true),
-            2 => return (2, true),
-            3 => return (3, true),
-            4 => return (4, true),
-            5 => return (5, true),
-            6 => return (6, true),
-            7 => return (7, true),
-            8 => return (8, true),
+            0 => {
+                if board_complete_random[0] == Tile::E {
+                    return (0, true);
+                }
+            }
+            1 => {
+                if board_complete_random[1] == Tile::E {
+                    return (1, true);
+                }
+            }
+            2 => {
+                if board_complete_random[2] == Tile::E {
+                    return (2, true);
+                }
+            }
+            3 => {
+                if board_complete_random[3] == Tile::E {
+                    return (3, true);
+                }
+            }
+            4 => {
+                if board_complete_random[4] == Tile::E {
+                    return (4, true);
+                }
+            }
+            5 => {
+                if board_complete_random[5] == Tile::E {
+                    return (5, true);
+                }
+            }
+            6 => {
+                if board_complete_random[6] == Tile::E {
+                    return (6, true);
+                }
+            }
+            7 => {
+                if board_complete_random[7] == Tile::E {
+                    return (7, true);
+                }
+            }
+            8 => {
+                if board_complete_random[8] == Tile::E {
+                    return (8, true);
+                }
+            }
             _ => println!("uh oh, numbers broke."),
         }
     }
     return (0, false);
 }
 
-fn computer_turn(board_turn: &mut [Tile; 9]) -> (usize, bool) {
-    let two_os = go_two_os(board_turn);
-    if two_os.1 == true {
-        return (two_os.0, true);
+fn computer_diff_gen(diffgen: i32) -> bool {
+    if diffgen == 100 {
+        return true;
+    } else {
+        let mut rng = rand::thread_rng();
+        let rand = rng.gen_range(0, 101);
+        if rand >= diffgen {
+            return false;
+        } else {
+            return true;
+        }
     }
-    let two_xs = go_two_xs(board_turn);
-    if two_xs.1 == true {
-        return (two_xs.0, true);
-    }
-    let two_xs_nonconsecutive = go_two_xs_nonconsecutive(board_turn);
-    if two_xs_nonconsecutive.1 == true {
-        return (two_xs_nonconsecutive.0, true);
-    }
-    let middle = go_middle(board_turn);
-    if middle.1 == true {
-        return (middle.0, true);
-    }
-    let randcorner_w_bordering_edge = go_randcorner_w_bordering_edge(board_turn);
-    if randcorner_w_bordering_edge.1 == true {
-        return (randcorner_w_bordering_edge.0, true);
-    }
-    let rand_norm_corner = go_rand_norm_corner(board_turn);
-    if rand_norm_corner.1 == true {
-        return (rand_norm_corner.0, true);
-    }
-    let rand_norm_edge = go_rand_norm_edge(board_turn);
-    if rand_norm_edge.1 == true {
-        return (rand_norm_edge.0, true);
-    }
-    let rand_corner_w_bordering_corner = go_rand_corner_w_bordering_corner(board_turn);
-    if rand_corner_w_bordering_corner.1 == true {
-        return (rand_corner_w_bordering_corner.0, true);
-    }
-    let complete_random = go_complete_random(board_turn);
-    if complete_random.1 == true {
-        return (complete_random.0, true);
+}
+
+fn computer_turn(board_turn: &mut [Tile; 9], diffcomp: i32) -> (usize, bool) {
+    // make it actually do like go_complete_random or the following using the pattern etc
+    let compdiffgen = computer_diff_gen(diffcomp);
+    if compdiffgen == true {
+        let two_os = go_two_os(board_turn);
+        if two_os.1 == true {
+            return (two_os.0, true);
+        }
+        let two_xs = go_two_xs(board_turn);
+        if two_xs.1 == true {
+            return (two_xs.0, true);
+        }
+        let two_xs_nonconsecutive = go_two_xs_nonconsecutive(board_turn);
+        if two_xs_nonconsecutive.1 == true {
+            return (two_xs_nonconsecutive.0, true);
+        }
+        let middle = go_middle(board_turn);
+        if middle.1 == true {
+            return (middle.0, true);
+        }
+        let randcorner_w_bordering_edge = go_randcorner_w_bordering_edge(board_turn);
+        if randcorner_w_bordering_edge.1 == true {
+            return (randcorner_w_bordering_edge.0, true);
+        }
+        let rand_norm_corner = go_rand_norm_corner(board_turn);
+        if rand_norm_corner.1 == true {
+            return (rand_norm_corner.0, true);
+        }
+        let rand_norm_edge = go_rand_norm_edge(board_turn);
+        if rand_norm_edge.1 == true {
+            return (rand_norm_edge.0, true);
+        }
+        let rand_corner_w_bordering_corner = go_rand_corner_w_bordering_corner(board_turn);
+        if rand_corner_w_bordering_corner.1 == true {
+            return (rand_corner_w_bordering_corner.0, true);
+        }
+        let complete_random = go_complete_random(board_turn);
+        if complete_random.1 == true {
+            return (complete_random.0, true);
+        }
+    } else {
+        let complete_random = go_complete_random(board_turn);
+        if complete_random.1 == true {
+            return (complete_random.0, true);
+        }
     }
     return (0, false);
 }
@@ -506,6 +570,16 @@ fn computer() {
     // gen board
     let mut board: [Tile; 9] = [Tile::E; 9];
     print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
+    // difficulty
+    println!(
+        "what do you want the difficulty to be? 0-100, where 0 is easiest and 100 is impossible"
+    );
+    let mut difficulty = String::new();
+    std::io::stdin().read_line(&mut difficulty).unwrap();
+    // remove newline character and turn into an integer from string
+    let len = difficulty.len();
+    difficulty.truncate(len - 1);
+    let difficulty_int: usize = difficulty.parse().unwrap();
     println!("1 | 2 | 3");
     println!("----------");
     println!("4 | 5 | 6");
@@ -530,7 +604,7 @@ fn computer() {
         let one_second = time::Duration::new(1, 0);
         thread::sleep(one_second);
         print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
-        let comp_turn = computer_turn(&mut board);
+        let comp_turn = computer_turn(&mut board, difficulty_int.try_into().unwrap());
         if comp_turn.1 == true {
             board[comp_turn.0] = Tile::O;
         }
@@ -549,12 +623,12 @@ fn computer() {
 fn main() {
     print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
     println!("would you like to play two player or against the computer?");
-    println!("'single' for single player, 'two' for two player");
+    println!("'one' for single player, 'two' for two player");
     let mut choice = String::new();
     std::io::stdin().read_line(&mut choice).unwrap();
     let len = choice.len();
     choice.truncate(len - 1);
-    if choice == "single" {
+    if choice == "one" {
         computer();
     } else if choice == "two" {
         twoplayer()
