@@ -1,6 +1,10 @@
+// TODO
+// center on terminal using https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797
+// add stats after winning
+
 // for random
 use rand::Rng;
-// for sleep
+// for time stuff
 use std::{thread, time};
 // for usize to i32 convert
 use std::convert::TryInto;
@@ -12,6 +16,9 @@ enum Tile {
     E,
 }
 
+fn clear() {
+    print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
+}
 fn print_tile(t: Tile) -> char {
     return match t {
         Tile::X => 'X',
@@ -83,6 +90,10 @@ fn win_check(board_win: &mut [Tile; 9]) -> i32 {
     return 0;
 }
 
+fn print_stats(diffstat: usize) {
+    println!("Difficulty was: {}", diffstat);
+}
+
 fn turn(isx: bool, board_turn: &mut [Tile; 9]) -> usize {
     loop {
         let mut input = String::new();
@@ -102,6 +113,9 @@ fn turn(isx: bool, board_turn: &mut [Tile; 9]) -> usize {
             return input_int;
         } else {
             println!("someone has already gone there!");
+            thread::sleep(time::Duration::from_secs(1));
+            clear();
+            print_board(board_turn);
         }
     }
 }
@@ -110,7 +124,7 @@ fn twoplayer() {
     // gen board
     let mut board: [Tile; 9] = [Tile::E; 9];
     // player input
-    print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
+    clear();
     println!("1 | 2 | 3");
     println!("----------");
     println!("4 | 5 | 6");
@@ -118,25 +132,25 @@ fn twoplayer() {
     println!("7 | 8 | 9");
     loop {
         board[turn(true, &mut board)] = Tile::X;
-        print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
+        clear();
         print_board(&mut board);
         let win = win_check(&mut board);
         if win == 1 {
-            println!("X Wins");
+            println!("X Wins!");
             break;
         } else if win == 2 {
-            println!("tie!");
+            println!("Tie!");
             break;
         }
         board[turn(false, &mut board)] = Tile::O;
-        print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
+        clear();
         print_board(&mut board);
         let win = win_check(&mut board);
         if win == 1 {
             println!("O wins!");
             break;
         } else if win == 2 {
-            println!("tie!");
+            println!("Tie!");
             break;
         }
     }
@@ -567,9 +581,10 @@ fn computer_turn(board_turn: &mut [Tile; 9], diffcomp: i32) -> (usize, bool) {
     return (0, false);
 }
 fn computer() {
+    let now = time::Instant::now();
     // gen board
     let mut board: [Tile; 9] = [Tile::E; 9];
-    print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
+    clear();
     // difficulty
     println!(
         "what do you want the difficulty to be? 0-100, where 0 is easiest and 100 is impossible"
@@ -580,7 +595,7 @@ fn computer() {
     let len = difficulty.len();
     difficulty.truncate(len - 1);
     let difficulty_int: usize = difficulty.parse().unwrap();
-    print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
+    clear();
     println!("1 | 2 | 3");
     println!("----------");
     println!("4 | 5 | 6");
@@ -589,22 +604,25 @@ fn computer() {
     loop {
         // Human's turn
         board[turn(true, &mut board)] = Tile::X;
-        print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
+        clear();
         print_board(&mut board);
         let win = win_check(&mut board);
         if win == 1 {
-            println!("X Wins");
+            println!("X Wins!");
+            print_stats(difficulty_int);
+            println!("Time: {} seconds", now.elapsed().as_secs());
             break;
         } else if win == 2 {
-            println!("tie!");
+            println!("Tie!");
+            print_stats(difficulty_int);
+            println!("Time: {} seconds", now.elapsed().as_secs());
             break;
         }
         // computer turn
         println!("thinking...");
         // wait one second
-        let one_second = time::Duration::new(1, 0);
-        thread::sleep(one_second);
-        print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
+        thread::sleep(time::Duration::from_secs(1));
+        clear();
         let comp_turn = computer_turn(&mut board, difficulty_int.try_into().unwrap());
         if comp_turn.1 == true {
             board[comp_turn.0] = Tile::O;
@@ -613,16 +631,20 @@ fn computer() {
         let win = win_check(&mut board);
         if win == 1 {
             println!("O wins!");
+            print_stats(difficulty_int);
+            println!("Time: {} seconds", now.elapsed().as_secs());
             break;
         } else if win == 2 {
-            println!("tie!");
+            println!("Tie!");
+            print_stats(difficulty_int);
+            println!("Time: {} seconds", now.elapsed().as_secs());
             break;
         }
     }
 }
 
 fn main() {
-    print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
+    clear();
     println!("would you like to play two player or against the computer?");
     println!("'one' for single player, 'two' for two player");
     let mut choice = String::new();
