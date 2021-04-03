@@ -3,7 +3,7 @@
 // add stats after winning
 
 // for random
-use rand::Rng;
+use rand::{thread_rng, Rng};
 // for time stuff
 use std::{thread, time};
 // for usize to i32 convert
@@ -17,9 +17,11 @@ enum Tile {
 }
 
 fn clear() {
+    // clears the terminal
     print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
 }
 fn print_tile(t: Tile) -> char {
+    // formats the tile enum into a char
     return match t {
         Tile::X => 'X',
         Tile::O => 'O',
@@ -27,74 +29,69 @@ fn print_tile(t: Tile) -> char {
     };
 }
 
-fn print_board(board_nice: &mut [Tile; 9]) {
+fn print_board(board: &mut [Tile; 9]) {
+    // prints board with nice formatting and a key off to the side
     println!(
         "{} | {} | {}                    1 | 2 | 3",
-        print_tile(board_nice[0]),
-        print_tile(board_nice[1]),
-        print_tile(board_nice[2])
+        print_tile(board[0]),
+        print_tile(board[1]),
+        print_tile(board[2])
     );
     println!("----------                   ----------");
     println!(
         "{} | {} | {}              Key:  4 | 5 | 6",
-        print_tile(board_nice[3]),
-        print_tile(board_nice[4]),
-        print_tile(board_nice[5])
+        print_tile(board[3]),
+        print_tile(board[4]),
+        print_tile(board[5])
     );
     println!("----------                   ----------");
     println!(
         "{} | {} | {}                    7 | 8 | 9",
-        print_tile(board_nice[6]),
-        print_tile(board_nice[7]),
-        print_tile(board_nice[8])
+        print_tile(board[6]),
+        print_tile(board[7]),
+        print_tile(board[8])
     );
 }
 
-fn win_check(board_win: &mut [Tile; 9]) -> i32 {
-    if (board_win[0] == Tile::X && board_win[1] == Tile::X && board_win[2] == Tile::X)
-        || (board_win[3] == Tile::X && board_win[4] == Tile::X && board_win[5] == Tile::X)
-        || (board_win[6] == Tile::X && board_win[7] == Tile::X && board_win[8] == Tile::X)
-        || (board_win[0] == Tile::X && board_win[3] == Tile::X && board_win[6] == Tile::X)
-        || (board_win[1] == Tile::X && board_win[4] == Tile::X && board_win[7] == Tile::X)
-        || (board_win[2] == Tile::X && board_win[5] == Tile::X && board_win[8] == Tile::X)
-        || (board_win[0] == Tile::X && board_win[4] == Tile::X && board_win[8] == Tile::X)
-        || (board_win[2] == Tile::X && board_win[4] == Tile::X && board_win[6] == Tile::X)
+fn win_check(board: &mut [Tile; 9]) -> i32 {
+    // hardcoded all possible winning positions
+    // returns 0 if nothing, 1 if someone won, and 2 if its a tie
+    if (board[0] == Tile::X && board[1] == Tile::X && board[2] == Tile::X)
+        || (board[3] == Tile::X && board[4] == Tile::X && board[5] == Tile::X)
+        || (board[6] == Tile::X && board[7] == Tile::X && board[8] == Tile::X)
+        || (board[0] == Tile::X && board[3] == Tile::X && board[6] == Tile::X)
+        || (board[1] == Tile::X && board[4] == Tile::X && board[7] == Tile::X)
+        || (board[2] == Tile::X && board[5] == Tile::X && board[8] == Tile::X)
+        || (board[0] == Tile::X && board[4] == Tile::X && board[8] == Tile::X)
+        || (board[2] == Tile::X && board[4] == Tile::X && board[6] == Tile::X)
     {
         return 1;
     }
 
-    if board_win[0] == Tile::O && board_win[1] == Tile::O && board_win[2] == Tile::O
-        || (board_win[3] == Tile::O && board_win[4] == Tile::O && board_win[5] == Tile::O)
-        || (board_win[6] == Tile::O && board_win[7] == Tile::O && board_win[8] == Tile::O)
-        || (board_win[0] == Tile::O && board_win[3] == Tile::O && board_win[6] == Tile::O)
-        || (board_win[1] == Tile::O && board_win[4] == Tile::O && board_win[7] == Tile::O)
-        || (board_win[2] == Tile::O && board_win[5] == Tile::O && board_win[8] == Tile::O)
-        || (board_win[0] == Tile::O && board_win[4] == Tile::O && board_win[8] == Tile::O)
-        || (board_win[2] == Tile::O && board_win[4] == Tile::O && board_win[6] == Tile::O)
+    if board[0] == Tile::O && board[1] == Tile::O && board[2] == Tile::O
+        || (board[3] == Tile::O && board[4] == Tile::O && board[5] == Tile::O)
+        || (board[6] == Tile::O && board[7] == Tile::O && board[8] == Tile::O)
+        || (board[0] == Tile::O && board[3] == Tile::O && board[6] == Tile::O)
+        || (board[1] == Tile::O && board[4] == Tile::O && board[7] == Tile::O)
+        || (board[2] == Tile::O && board[5] == Tile::O && board[8] == Tile::O)
+        || (board[0] == Tile::O && board[4] == Tile::O && board[8] == Tile::O)
+        || (board[2] == Tile::O && board[4] == Tile::O && board[6] == Tile::O)
     {
         return 1;
     }
 
-    if board_win[0] != Tile::E
-        && board_win[1] != Tile::E
-        && board_win[3] != Tile::E
-        && board_win[4] != Tile::E
-        && board_win[5] != Tile::E
-        && board_win[6] != Tile::E
-        && board_win[6] != Tile::E
-        && board_win[7] != Tile::E
-        && board_win[8] != Tile::E
-    {
-        return 2;
+    // checks 0 thru 8 board pieces, and if one of them is empty, it breaks
+    // therefore, if all of them are full, it'll return 2 for tie.
+    for i in 0..9 {
+        if board[i] == Tile::E {
+            return 0;
+        }
     }
-    return 0;
+    return 2;
 }
 
-fn print_stats(diffstat: usize) {
-    println!("Difficulty was: {}", diffstat);
-}
-
-fn turn(isx: bool, board_turn: &mut [Tile; 9]) -> usize {
+// this is the two player code
+fn turn(isx: bool, board: &mut [Tile; 9]) -> usize {
     loop {
         let mut input = String::new();
         if isx == true {
@@ -104,18 +101,16 @@ fn turn(isx: bool, board_turn: &mut [Tile; 9]) -> usize {
         };
         std::io::stdin().read_line(&mut input).unwrap();
         // remove newline character and turn into an integer from string
-        let len = input.len();
-        input.truncate(len - 1);
-        let mut input_int: usize = input.parse().unwrap();
+        let mut input_int: usize = input.trim().parse().unwrap();
         // off by one error prevention
         input_int = input_int - 1;
-        if board_turn[input_int] == Tile::E {
+        if board[input_int] == Tile::E {
             return input_int;
         } else {
             println!("someone has already gone there!");
             thread::sleep(time::Duration::from_secs(1));
             clear();
-            print_board(board_turn);
+            print_board(board);
         }
     }
 }
@@ -131,6 +126,7 @@ fn twoplayer() {
     println!("----------");
     println!("7 | 8 | 9");
     loop {
+        // x's turn
         board[turn(true, &mut board)] = Tile::X;
         clear();
         print_board(&mut board);
@@ -142,6 +138,7 @@ fn twoplayer() {
             println!("Tie!");
             break;
         }
+        // o's turn
         board[turn(false, &mut board)] = Tile::O;
         clear();
         print_board(&mut board);
@@ -156,172 +153,159 @@ fn twoplayer() {
     }
 }
 
-fn go_two_os(board_two_os: &mut [Tile; 9]) -> (usize, bool) {
-    if (board_two_os[1] == Tile::O && board_two_os[2] == Tile::O && board_two_os[0] == Tile::E)
-        || (board_two_os[3] == Tile::O && board_two_os[6] == Tile::O && board_two_os[0] == Tile::E)
-        || (board_two_os[4] == Tile::O && board_two_os[8] == Tile::O && board_two_os[0] == Tile::E)
+fn go_two_os(board: &mut [Tile; 9]) -> (usize, bool) {
+    if (board[1] == Tile::O && board[2] == Tile::O && board[0] == Tile::E)
+        || (board[3] == Tile::O && board[6] == Tile::O && board[0] == Tile::E)
+        || (board[4] == Tile::O && board[8] == Tile::O && board[0] == Tile::E)
     {
         return (0, true);
     }
-    if (board_two_os[0] == Tile::O && board_two_os[2] == Tile::O && board_two_os[1] == Tile::E)
-        || (board_two_os[7] == Tile::O && board_two_os[4] == Tile::O && board_two_os[1] == Tile::E)
+    if (board[0] == Tile::O && board[2] == Tile::O && board[1] == Tile::E)
+        || (board[7] == Tile::O && board[4] == Tile::O && board[1] == Tile::E)
     {
         return (1, true);
     }
-    if (board_two_os[0] == Tile::O && board_two_os[1] == Tile::O && board_two_os[2] == Tile::E)
-        || (board_two_os[8] == Tile::O && board_two_os[5] == Tile::O && board_two_os[2] == Tile::E)
-        || (board_two_os[4] == Tile::O && board_two_os[6] == Tile::O && board_two_os[2] == Tile::E)
+    if (board[0] == Tile::O && board[1] == Tile::O && board[2] == Tile::E)
+        || (board[8] == Tile::O && board[5] == Tile::O && board[2] == Tile::E)
+        || (board[4] == Tile::O && board[6] == Tile::O && board[2] == Tile::E)
     {
         return (2, true);
     }
-    if (board_two_os[0] == Tile::O && board_two_os[6] == Tile::O && board_two_os[3] == Tile::E)
-        || (board_two_os[4] == Tile::O && board_two_os[5] == Tile::O && board_two_os[3] == Tile::E)
+    if (board[0] == Tile::O && board[6] == Tile::O && board[3] == Tile::E)
+        || (board[4] == Tile::O && board[5] == Tile::O && board[3] == Tile::E)
     {
         return (3, true);
     }
-    if (board_two_os[0] == Tile::O && board_two_os[8] == Tile::O && board_two_os[4] == Tile::E)
-        || (board_two_os[1] == Tile::O && board_two_os[7] == Tile::O && board_two_os[4] == Tile::E)
-        || (board_two_os[2] == Tile::O && board_two_os[6] == Tile::O && board_two_os[4] == Tile::E)
-        || (board_two_os[3] == Tile::O && board_two_os[5] == Tile::O && board_two_os[4] == Tile::E)
+    if (board[0] == Tile::O && board[8] == Tile::O && board[4] == Tile::E)
+        || (board[1] == Tile::O && board[7] == Tile::O && board[4] == Tile::E)
+        || (board[2] == Tile::O && board[6] == Tile::O && board[4] == Tile::E)
+        || (board[3] == Tile::O && board[5] == Tile::O && board[4] == Tile::E)
     {
         return (4, true);
     }
-    if (board_two_os[3] == Tile::O && board_two_os[4] == Tile::O && board_two_os[5] == Tile::E)
-        || (board_two_os[2] == Tile::O && board_two_os[8] == Tile::O && board_two_os[5] == Tile::E)
+    if (board[3] == Tile::O && board[4] == Tile::O && board[5] == Tile::E)
+        || (board[2] == Tile::O && board[8] == Tile::O && board[5] == Tile::E)
     {
         return (5, true);
     }
-    if (board_two_os[7] == Tile::O && board_two_os[8] == Tile::O && board_two_os[6] == Tile::E)
-        || (board_two_os[0] == Tile::O && board_two_os[3] == Tile::O && board_two_os[6] == Tile::E)
-        || (board_two_os[2] == Tile::O && board_two_os[4] == Tile::O && board_two_os[6] == Tile::E)
+    if (board[7] == Tile::O && board[8] == Tile::O && board[6] == Tile::E)
+        || (board[0] == Tile::O && board[3] == Tile::O && board[6] == Tile::E)
+        || (board[2] == Tile::O && board[4] == Tile::O && board[6] == Tile::E)
     {
         return (6, true);
     }
-    if (board_two_os[6] == Tile::O && board_two_os[8] == Tile::O && board_two_os[7] == Tile::E)
-        || (board_two_os[1] == Tile::O && board_two_os[4] == Tile::O && board_two_os[7] == Tile::E)
+    if (board[6] == Tile::O && board[8] == Tile::O && board[7] == Tile::E)
+        || (board[1] == Tile::O && board[4] == Tile::O && board[7] == Tile::E)
     {
         return (7, true);
     }
-    if (board_two_os[6] == Tile::O && board_two_os[7] == Tile::O && board_two_os[8] == Tile::E)
-        || (board_two_os[2] == Tile::O && board_two_os[5] == Tile::O && board_two_os[8] == Tile::E)
-        || (board_two_os[0] == Tile::O && board_two_os[4] == Tile::O && board_two_os[8] == Tile::E)
+    if (board[6] == Tile::O && board[7] == Tile::O && board[8] == Tile::E)
+        || (board[2] == Tile::O && board[5] == Tile::O && board[8] == Tile::E)
+        || (board[0] == Tile::O && board[4] == Tile::O && board[8] == Tile::E)
     {
         return (8, true);
     }
     return (0, false);
 }
 
-fn go_two_xs(board_two_xs: &mut [Tile; 9]) -> (usize, bool) {
-    if (board_two_xs[1] == Tile::X && board_two_xs[2] == Tile::X && board_two_xs[0] == Tile::E)
-        || (board_two_xs[4] == Tile::X && board_two_xs[8] == Tile::X && board_two_xs[0] == Tile::E)
-        || (board_two_xs[3] == Tile::X && board_two_xs[6] == Tile::X && board_two_xs[0] == Tile::E)
+fn go_two_xs(board: &mut [Tile; 9]) -> (usize, bool) {
+    if (board[1] == Tile::X && board[2] == Tile::X && board[0] == Tile::E)
+        || (board[4] == Tile::X && board[8] == Tile::X && board[0] == Tile::E)
+        || (board[3] == Tile::X && board[6] == Tile::X && board[0] == Tile::E)
     {
         return (0, true);
     }
-    if (board_two_xs[0] == Tile::X && board_two_xs[2] == Tile::X && board_two_xs[1] == Tile::E)
-        || (board_two_xs[7] == Tile::X && board_two_xs[4] == Tile::X && board_two_xs[1] == Tile::E)
+    if (board[0] == Tile::X && board[2] == Tile::X && board[1] == Tile::E)
+        || (board[7] == Tile::X && board[4] == Tile::X && board[1] == Tile::E)
     {
         return (1, true);
     }
-    if (board_two_xs[0] == Tile::X && board_two_xs[1] == Tile::X && board_two_xs[2] == Tile::E)
-        || (board_two_xs[8] == Tile::X && board_two_xs[5] == Tile::X && board_two_xs[2] == Tile::E)
-        || (board_two_xs[4] == Tile::X && board_two_xs[6] == Tile::X && board_two_xs[2] == Tile::E)
+    if (board[0] == Tile::X && board[1] == Tile::X && board[2] == Tile::E)
+        || (board[8] == Tile::X && board[5] == Tile::X && board[2] == Tile::E)
+        || (board[4] == Tile::X && board[6] == Tile::X && board[2] == Tile::E)
     {
         return (2, true);
     }
-    if (board_two_xs[4] == Tile::X && board_two_xs[5] == Tile::X && board_two_xs[3] == Tile::E)
-        || (board_two_xs[0] == Tile::X && board_two_xs[6] == Tile::X && board_two_xs[3] == Tile::E)
+    if (board[4] == Tile::X && board[5] == Tile::X && board[3] == Tile::E)
+        || (board[0] == Tile::X && board[6] == Tile::X && board[3] == Tile::E)
     {
         return (3, true);
     }
-    if (board_two_xs[3] == Tile::X && board_two_xs[5] == Tile::X && board_two_xs[4] == Tile::E)
-        || (board_two_xs[2] == Tile::X && board_two_xs[6] == Tile::X && board_two_xs[4] == Tile::E)
-        || (board_two_xs[0] == Tile::X && board_two_xs[8] == Tile::X && board_two_xs[4] == Tile::E)
-        || (board_two_xs[1] == Tile::X && board_two_xs[7] == Tile::X && board_two_xs[4] == Tile::E)
+    if (board[3] == Tile::X && board[5] == Tile::X && board[4] == Tile::E)
+        || (board[2] == Tile::X && board[6] == Tile::X && board[4] == Tile::E)
+        || (board[0] == Tile::X && board[8] == Tile::X && board[4] == Tile::E)
+        || (board[1] == Tile::X && board[7] == Tile::X && board[4] == Tile::E)
     {
         return (4, true);
     }
-    if (board_two_xs[2] == Tile::X && board_two_xs[8] == Tile::X && board_two_xs[5] == Tile::E)
-        || (board_two_xs[3] == Tile::X && board_two_xs[4] == Tile::X && board_two_xs[5] == Tile::E)
+    if (board[2] == Tile::X && board[8] == Tile::X && board[5] == Tile::E)
+        || (board[3] == Tile::X && board[4] == Tile::X && board[5] == Tile::E)
     {
         return (5, true);
     }
-    if (board_two_xs[7] == Tile::X && board_two_xs[8] == Tile::X && board_two_xs[6] == Tile::E)
-        || (board_two_xs[2] == Tile::X && board_two_xs[4] == Tile::X && board_two_xs[6] == Tile::E)
-        || (board_two_xs[0] == Tile::X && board_two_xs[3] == Tile::X && board_two_xs[6] == Tile::E)
+    if (board[7] == Tile::X && board[8] == Tile::X && board[6] == Tile::E)
+        || (board[2] == Tile::X && board[4] == Tile::X && board[6] == Tile::E)
+        || (board[0] == Tile::X && board[3] == Tile::X && board[6] == Tile::E)
     {
         return (6, true);
     }
-    if (board_two_xs[6] == Tile::X && board_two_xs[8] == Tile::X && board_two_xs[7] == Tile::E)
-        || (board_two_xs[1] == Tile::X && board_two_xs[4] == Tile::X && board_two_xs[7] == Tile::E)
+    if (board[6] == Tile::X && board[8] == Tile::X && board[7] == Tile::E)
+        || (board[1] == Tile::X && board[4] == Tile::X && board[7] == Tile::E)
     {
         return (7, true);
     }
-    if (board_two_xs[6] == Tile::X && board_two_xs[7] == Tile::X && board_two_xs[8] == Tile::E)
-        || (board_two_xs[2] == Tile::X && board_two_xs[5] == Tile::X && board_two_xs[8] == Tile::E)
-        || (board_two_xs[0] == Tile::X && board_two_xs[4] == Tile::X && board_two_xs[8] == Tile::E)
+    if (board[6] == Tile::X && board[7] == Tile::X && board[8] == Tile::E)
+        || (board[2] == Tile::X && board[5] == Tile::X && board[8] == Tile::E)
+        || (board[0] == Tile::X && board[4] == Tile::X && board[8] == Tile::E)
     {
         return (8, true);
     }
     return (0, false);
 }
 
-fn go_rand_norm_edge(board_rand_norm_edge: &mut [Tile; 9]) -> (usize, bool) {
-    let mut rng = rand::thread_rng();
-    let rand = rng.gen_range(1, 6);
+fn go_rand_norm_edge(board: &mut [Tile; 9]) -> (usize, bool) {
+    let rand = thread_rng().gen_range(1, 6);
     match rand {
         1 => {
-            if board_rand_norm_edge[1] == Tile::E {
+            if board[1] == Tile::E {
                 return (1, true);
             }
         }
         2 => {
-            if board_rand_norm_edge[3] == Tile::E {
+            if board[3] == Tile::E {
                 return (3, true);
             }
         }
         3 => {
-            if board_rand_norm_edge[4] == Tile::E {
+            if board[4] == Tile::E {
                 return (4, true);
             }
         }
         4 => {
-            if board_rand_norm_edge[5] == Tile::E {
+            if board[5] == Tile::E {
                 return (5, true);
             }
         }
         5 => {
-            if board_rand_norm_edge[7] == Tile::E {
+            if board[7] == Tile::E {
                 return (7, true);
             }
         }
-        _ => println!("uh, numbers have broken."),
+        _ => unreachable!(),
     }
     return (0, false);
 }
 
-fn go_two_xs_nonconsecutive(board_two_xs_nonconsecutive: &mut [Tile; 9]) -> (usize, bool) {
-    for _i in 1..101 {
-        if (board_two_xs_nonconsecutive[0] == Tile::X
-            && board_two_xs_nonconsecutive[8] == Tile::X
-            && board_two_xs_nonconsecutive[4] == Tile::O)
-            || (board_two_xs_nonconsecutive[2] == Tile::X
-                && board_two_xs_nonconsecutive[6] == Tile::X
-                && board_two_xs_nonconsecutive[4] == Tile::O)
-            || (board_two_xs_nonconsecutive[0] == Tile::X
-                && board_two_xs_nonconsecutive[6] == Tile::X
-                && board_two_xs_nonconsecutive[4] == Tile::O)
-            || (board_two_xs_nonconsecutive[8] == Tile::X
-                && board_two_xs_nonconsecutive[7] == Tile::X
-                && board_two_xs_nonconsecutive[4] == Tile::O)
-            || (board_two_xs_nonconsecutive[2] == Tile::X
-                && board_two_xs_nonconsecutive[0] == Tile::X
-                && board_two_xs_nonconsecutive[4] == Tile::O)
-            || (board_two_xs_nonconsecutive[2] == Tile::X
-                && board_two_xs_nonconsecutive[8] == Tile::X
-                && board_two_xs_nonconsecutive[4] == Tile::O)
+fn go_two_xs_nonconsecutive(board: &mut [Tile; 9]) -> (usize, bool) {
+    for _ in 1..101 {
+        if (board[0] == Tile::X && board[8] == Tile::X && board[4] == Tile::O)
+            || (board[2] == Tile::X && board[6] == Tile::X && board[4] == Tile::O)
+            || (board[0] == Tile::X && board[6] == Tile::X && board[4] == Tile::O)
+            || (board[8] == Tile::X && board[7] == Tile::X && board[4] == Tile::O)
+            || (board[2] == Tile::X && board[0] == Tile::X && board[4] == Tile::O)
+            || (board[2] == Tile::X && board[8] == Tile::X && board[4] == Tile::O)
         {
-            let norm_edge = go_rand_norm_edge(board_two_xs_nonconsecutive);
+            let norm_edge = go_rand_norm_edge(board);
             if norm_edge.1 == true {
                 return (norm_edge.0, true);
             }
@@ -330,128 +314,101 @@ fn go_two_xs_nonconsecutive(board_two_xs_nonconsecutive: &mut [Tile; 9]) -> (usi
     return (0, false);
 }
 
-fn go_middle(board_middle: &mut [Tile; 9]) -> (usize, bool) {
-    if board_middle[4] == Tile::E {
+fn go_middle(board: &mut [Tile; 9]) -> (usize, bool) {
+    if board[4] == Tile::E {
         return (4, true);
     }
     return (0, false);
 }
 
-fn go_randcorner_w_bordering_edge(
-    board_randcorner_w_bordering_edge: &mut [Tile; 9],
-) -> (usize, bool) {
-    let mut rng = rand::thread_rng();
-    for _i in 1..101 {
-        let rand = rng.gen_range(1, 5);
+fn go_randcorner_w_bordering_edge(board: &mut [Tile; 9]) -> (usize, bool) {
+    for _ in 1..101 {
+        let rand = thread_rng().gen_range(1, 5);
         match rand {
             1 => {
-                if board_randcorner_w_bordering_edge[0] == Tile::E
-                    && board_randcorner_w_bordering_edge[3] == Tile::X
-                    && board_randcorner_w_bordering_edge[1] == Tile::X
-                {
+                if board[0] == Tile::E && board[3] == Tile::X && board[1] == Tile::X {
                     return (0, true);
                 }
             }
             2 => {
-                if board_randcorner_w_bordering_edge[2] == Tile::E
-                    && board_randcorner_w_bordering_edge[1] == Tile::X
-                    && board_randcorner_w_bordering_edge[5] == Tile::X
-                {
+                if board[2] == Tile::E && board[1] == Tile::X && board[5] == Tile::X {
                     return (2, true);
                 }
             }
             3 => {
-                if board_randcorner_w_bordering_edge[6] == Tile::E
-                    && board_randcorner_w_bordering_edge[3] == Tile::X
-                    && board_randcorner_w_bordering_edge[7] == Tile::X
-                {
+                if board[6] == Tile::E && board[3] == Tile::X && board[7] == Tile::X {
                     return (6, true);
                 }
             }
             4 => {
-                if board_randcorner_w_bordering_edge[8] == Tile::E
-                    && board_randcorner_w_bordering_edge[5] == Tile::X
-                    && board_randcorner_w_bordering_edge[7] == Tile::X
-                {
+                if board[8] == Tile::E && board[5] == Tile::X && board[7] == Tile::X {
                     return (9, true);
                 }
             }
-            _ => println!("uh oh, numbers broke"),
+            _ => unreachable!(),
         }
     }
     return (0, false);
 }
 
-fn go_rand_norm_corner(board_rand_norm_corner: &mut [Tile; 9]) -> (usize, bool) {
-    let mut rng = rand::thread_rng();
-    for _i in 1..101 {
-        let rand = rng.gen_range(1, 5);
+fn go_rand_norm_corner(board: &mut [Tile; 9]) -> (usize, bool) {
+    for _ in 1..101 {
+        let rand = thread_rng().gen_range(1, 5);
         match rand {
             1 => {
-                if board_rand_norm_corner[0] == Tile::E {
+                if board[0] == Tile::E {
                     return (0, true);
                 }
             }
             2 => {
-                if board_rand_norm_corner[2] == Tile::E {
+                if board[2] == Tile::E {
                     return (2, true);
                 }
             }
             3 => {
-                if board_rand_norm_corner[6] == Tile::E {
+                if board[6] == Tile::E {
                     return (6, true);
                 }
             }
             4 => {
-                if board_rand_norm_corner[8] == Tile::E {
+                if board[8] == Tile::E {
                     return (8, true);
                 }
             }
-            _ => println!("uh oh, numbers broke."),
+            _ => unreachable!(),
         }
     }
     return (0, false);
 }
 
-fn go_rand_corner_w_bordering_corner(
-    board_rand_corner_w_bordering_corner: &mut [Tile; 9],
-) -> (usize, bool) {
-    let mut rng = rand::thread_rng();
-    for _i in 1..101 {
-        let rand = rng.gen_range(1, 5);
+fn go_rand_corner_w_bordering_corner(board: &mut [Tile; 9]) -> (usize, bool) {
+    for _ in 1..101 {
+        let rand = thread_rng().gen_range(1, 5);
         match rand {
             1 => {
-                if (board_rand_corner_w_bordering_corner[2] == Tile::X
-                    && board_rand_corner_w_bordering_corner[0] == Tile::E)
-                    || (board_rand_corner_w_bordering_corner[6] == Tile::X
-                        && board_rand_corner_w_bordering_corner[0] == Tile::E)
+                if (board[2] == Tile::X && board[0] == Tile::E)
+                    || (board[6] == Tile::X && board[0] == Tile::E)
                 {
                     return (0, true);
                 }
             }
             2 => {
-                if (board_rand_corner_w_bordering_corner[0] == Tile::X
-                    && board_rand_corner_w_bordering_corner[2] == Tile::E)
-                    || (board_rand_corner_w_bordering_corner[8] == Tile::X
-                        && board_rand_corner_w_bordering_corner[2] == Tile::E)
+                if (board[0] == Tile::X && board[2] == Tile::E)
+                    || (board[8] == Tile::X && board[2] == Tile::E)
                 {
                     return (2, true);
                 }
             }
             3 => {
-                if (board_rand_corner_w_bordering_corner[0] == Tile::X
-                    && board_rand_corner_w_bordering_corner[6] == Tile::E)
-                    || (board_rand_corner_w_bordering_corner[8] == Tile::X
-                        && board_rand_corner_w_bordering_corner[6] == Tile::E)
+                if (board[0] == Tile::X && board[6] == Tile::E)
+                    || (board[8] == Tile::X && board[6] == Tile::E)
                 {
                     return (6, true);
                 }
             }
             4 => {
-                if (board_rand_corner_w_bordering_corner[2] == Tile::X
-                    && board_rand_corner_w_bordering_corner[8] == Tile::E)
-                    || (board_rand_corner_w_bordering_corner[6] == Tile::X
-                        && board_rand_corner_w_bordering_corner[8] == Tile::E)
+                if (board[2] == Tile::X && board[8] == Tile::E)
+                    || (board[6] == Tile::X && board[8] == Tile::E)
                 {
                     return (8, true);
                 }
@@ -462,57 +419,56 @@ fn go_rand_corner_w_bordering_corner(
     return (0, false);
 }
 
-fn go_complete_random(board_complete_random: &mut [Tile; 9]) -> (usize, bool) {
-    let mut rng = rand::thread_rng();
-    for _i in 1..101 {
-        let rand = rng.gen_range(0, 9);
+fn go_complete_random(board: &mut [Tile; 9]) -> (usize, bool) {
+    for _ in 1..101 {
+        let rand = thread_rng().gen_range(0, 9);
         match rand {
             0 => {
-                if board_complete_random[0] == Tile::E {
+                if board[0] == Tile::E {
                     return (0, true);
                 }
             }
             1 => {
-                if board_complete_random[1] == Tile::E {
+                if board[1] == Tile::E {
                     return (1, true);
                 }
             }
             2 => {
-                if board_complete_random[2] == Tile::E {
+                if board[2] == Tile::E {
                     return (2, true);
                 }
             }
             3 => {
-                if board_complete_random[3] == Tile::E {
+                if board[3] == Tile::E {
                     return (3, true);
                 }
             }
             4 => {
-                if board_complete_random[4] == Tile::E {
+                if board[4] == Tile::E {
                     return (4, true);
                 }
             }
             5 => {
-                if board_complete_random[5] == Tile::E {
+                if board[5] == Tile::E {
                     return (5, true);
                 }
             }
             6 => {
-                if board_complete_random[6] == Tile::E {
+                if board[6] == Tile::E {
                     return (6, true);
                 }
             }
             7 => {
-                if board_complete_random[7] == Tile::E {
+                if board[7] == Tile::E {
                     return (7, true);
                 }
             }
             8 => {
-                if board_complete_random[8] == Tile::E {
+                if board[8] == Tile::E {
                     return (8, true);
                 }
             }
-            _ => println!("uh oh, numbers broke."),
+            _ => unreachable!(),
         }
     }
     return (0, false);
@@ -522,8 +478,7 @@ fn computer_diff_gen(diffgen: i32) -> bool {
     if diffgen == 100 {
         return true;
     } else {
-        let mut rng = rand::thread_rng();
-        let rand = rng.gen_range(0, 101);
+        let rand = thread_rng().gen_range(0, 101);
         if rand >= diffgen {
             return false;
         } else {
@@ -532,48 +487,48 @@ fn computer_diff_gen(diffgen: i32) -> bool {
     }
 }
 
-fn computer_turn(board_turn: &mut [Tile; 9], diffcomp: i32) -> (usize, bool) {
+fn computer_turn(board: &mut [Tile; 9], diffcomp: i32) -> (usize, bool) {
     // make it actually do like go_complete_random or the following using the pattern etc
     let compdiffgen = computer_diff_gen(diffcomp);
     if compdiffgen == true {
-        let two_os = go_two_os(board_turn);
+        let two_os = go_two_os(board);
         if two_os.1 == true {
             return (two_os.0, true);
         }
-        let two_xs = go_two_xs(board_turn);
+        let two_xs = go_two_xs(board);
         if two_xs.1 == true {
             return (two_xs.0, true);
         }
-        let two_xs_nonconsecutive = go_two_xs_nonconsecutive(board_turn);
+        let two_xs_nonconsecutive = go_two_xs_nonconsecutive(board);
         if two_xs_nonconsecutive.1 == true {
             return (two_xs_nonconsecutive.0, true);
         }
-        let middle = go_middle(board_turn);
+        let middle = go_middle(board);
         if middle.1 == true {
             return (middle.0, true);
         }
-        let randcorner_w_bordering_edge = go_randcorner_w_bordering_edge(board_turn);
+        let randcorner_w_bordering_edge = go_randcorner_w_bordering_edge(board);
         if randcorner_w_bordering_edge.1 == true {
             return (randcorner_w_bordering_edge.0, true);
         }
-        let rand_norm_corner = go_rand_norm_corner(board_turn);
+        let rand_norm_corner = go_rand_norm_corner(board);
         if rand_norm_corner.1 == true {
             return (rand_norm_corner.0, true);
         }
-        let rand_norm_edge = go_rand_norm_edge(board_turn);
+        let rand_norm_edge = go_rand_norm_edge(board);
         if rand_norm_edge.1 == true {
             return (rand_norm_edge.0, true);
         }
-        let rand_corner_w_bordering_corner = go_rand_corner_w_bordering_corner(board_turn);
+        let rand_corner_w_bordering_corner = go_rand_corner_w_bordering_corner(board);
         if rand_corner_w_bordering_corner.1 == true {
             return (rand_corner_w_bordering_corner.0, true);
         }
-        let complete_random = go_complete_random(board_turn);
+        let complete_random = go_complete_random(board);
         if complete_random.1 == true {
             return (complete_random.0, true);
         }
     } else {
-        let complete_random = go_complete_random(board_turn);
+        let complete_random = go_complete_random(board);
         if complete_random.1 == true {
             return (complete_random.0, true);
         }
@@ -592,9 +547,7 @@ fn computer() {
     let mut difficulty = String::new();
     std::io::stdin().read_line(&mut difficulty).unwrap();
     // remove newline character and turn into an integer from string
-    let len = difficulty.len();
-    difficulty.truncate(len - 1);
-    let difficulty_int: usize = difficulty.parse().unwrap();
+    let difficulty_int: usize = difficulty.trim().parse().unwrap();
     clear();
     println!("1 | 2 | 3");
     println!("----------");
@@ -609,12 +562,12 @@ fn computer() {
         let win = win_check(&mut board);
         if win == 1 {
             println!("X Wins!");
-            print_stats(difficulty_int);
+            println!("Difficulty was: {}", difficulty_int);
             println!("Time: {} seconds", now.elapsed().as_secs());
             break;
         } else if win == 2 {
             println!("Tie!");
-            print_stats(difficulty_int);
+            println!("Difficulty was: {}", difficulty_int);
             println!("Time: {} seconds", now.elapsed().as_secs());
             break;
         }
@@ -631,12 +584,12 @@ fn computer() {
         let win = win_check(&mut board);
         if win == 1 {
             println!("O wins!");
-            print_stats(difficulty_int);
+            println!("Difficulty was: {}", difficulty_int);
             println!("Time: {} seconds", now.elapsed().as_secs());
             break;
         } else if win == 2 {
             println!("Tie!");
-            print_stats(difficulty_int);
+            println!("Difficulty was: {}", difficulty_int);
             println!("Time: {} seconds", now.elapsed().as_secs());
             break;
         }
@@ -649,11 +602,12 @@ fn main() {
     println!("'one' for single player, 'two' for two player");
     let mut choice = String::new();
     std::io::stdin().read_line(&mut choice).unwrap();
-    let len = choice.len();
-    choice.truncate(len - 1);
+    choice = choice.trim().to_string();
     if choice == "one" {
         computer();
     } else if choice == "two" {
         twoplayer()
+    } else {
+        println!("Please enter 'one' or 'two'.");
     }
 }
